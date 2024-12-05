@@ -1,0 +1,50 @@
+<?php
+require_once 'products.php';
+
+$productObj = new Products();
+$products = $productObj->readAll();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manajemen Produk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Daftar Produk</h2>
+    <a href="create_product.php" class="btn btn-primary mb-3">Tambah Produk Baru</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nama Produk</th>
+            <th>Jumlah</th>
+            <th>Harga</th>
+            <th>Aksi</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($products as $product): ?>
+            <tr>
+                <td><?= htmlspecialchars($product['id_produk']) ?></td>
+                <td><?= htmlspecialchars($product['nama_produk']) ?></td>
+                <td><?= htmlspecialchars($product['jumlah_produk']) ?></td>
+                <td>Rp. <?= htmlspecialchars($product['harga_produk']) ?></td>
+                <td>
+                    <a href="update_product.php?id=<?= $product['id_produk'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="delete_product.php?id=<?= $product['id_produk'] ?>" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Yakin ingin menghapus?')">
+                        Hapus
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
