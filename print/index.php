@@ -15,7 +15,7 @@ $sql = "
         c.nama_penerima,
         c.alamat_penerima,
         c.postcode_penerima,
-        
+        i.id as id_invoice,
         i.invoice,
         i.tanggal_invoice,
         i.subtotal,
@@ -24,17 +24,34 @@ $sql = "
         i.total,
         i.notes,
         i.status,
-        i.uang_muka,
-    p.*
+        i.uang_muka
     FROM invoices i
-    JOIN customers as c ON i.id = c.id
-    JOIN products as p ON p.id_produk = c.id
+         JOIN customers as c ON i.id_customers = c.id
     WHERE i.id = $invoice_id
 ";
+
+
 $database = new Database();
 $conn = $database->connect();
 $result = $conn->query($sql);
 $invoice = $result->fetch();
+
+
+
+function readAll($id_invoice)
+{
+  global $conn;
+  $sql = "SELECT * FROM products as p
+         JOIN invoice_product ip on p.id_produk = ip.id_product
+         where ip.id_invoice = :id_invoice";
+  $stmt = $conn->prepare($sql);
+  $stmt->execute(['id_invoice' => $id_invoice]);
+//  $stmt = $conn->query($sql);
+  return $stmt->fetchAll();
+}
+
+//print_r($invoice)   ;
+$products = readAll($invoice['id_invoice']);
 
 if (!$invoice) {
   die("Invoice tidak ditemukan.");
@@ -90,12 +107,15 @@ if (!$invoice) {
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><?= $invoice['nama_produk'] ?><br></td>
-                        <td><?= mb_strimwidth($invoice['keterangan_produk'], 0, 50, "...") ?> </td>
-                        <td><?= mb_strimwidth($invoice['jumlah_produk'], 0, 50, "...") ?> </td>
-                        <td>Rp <?= number_format($invoice['harga_produk'], 0, ',', '.') ?></td>
-                    </tr>
+                    <?php foreach ($products as $product) : ?>
+                        <tr>
+                            <td><?= $product['nama_produk'] ?><br></td>
+                            <td><?= mb_strimwidth($product['keterangan_produk'], 0, 50, "...") ?> </td>
+                            <td><?= mb_strimwidth($product['jumlah_produk'], 0, 50, "...") ?> </td>
+                            <td>Rp <?= number_format($product['harga_produk'], 0, ',', '.') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+
                     </tbody>
                 </table>
             </div>

@@ -4,14 +4,9 @@ require_once 'products.php';
 $productObj = new Products();
 $products = $productObj->readAll();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Manajemen Produk</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<?php require_once '../header.php' ?>
+
+
 <div class="container mt-5">
     <h2>Daftar Produk</h2>
     <a href="create_product.php" class="btn btn-primary mb-3">Tambah Produk Baru</a>
@@ -26,13 +21,14 @@ $products = $productObj->readAll();
             <th>Aksi</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="product-table">
         <?php foreach ($products as $product): ?>
             <tr>
                 <td><?= htmlspecialchars($product['id_produk']) ?></td>
                 <td><?= htmlspecialchars($product['nama_produk']) ?></td>
-                <td><?= htmlspecialchars($product['jumlah_produk']) ?></td>
-                <td>Rp. <?= htmlspecialchars($product['harga_produk']) ?></td>
+                <td class="jumlah-produk"><?= htmlspecialchars($product['jumlah_produk']) ?></td>
+                <td class="harga-produk">Rp. <?= htmlspecialchars($product['harga_produk']) ?></td>
+                <td class="total-produk">Rp. 0</td>
                 <td>
                     <a href="update_product.php?id=<?= $product['id_produk'] ?>" class="btn btn-warning btn-sm">Edit</a>
                     <a href="delete_product.php?id=<?= $product['id_produk'] ?>" class="btn btn-danger btn-sm"
@@ -44,7 +40,30 @@ $products = $productObj->readAll();
         <?php endforeach; ?>
         </tbody>
     </table>
+
+    <h4>Total Keseluruhan: <span id="total-keseluruhan">Rp. 0</span></h4>
+
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const rows = document.querySelectorAll('#product-table tr');
+		let grandTotal = 0;
+
+		rows.forEach(row => {
+			const jumlahProduk = parseFloat(row.querySelector('.jumlah-produk').textContent) || 0;
+			const hargaProduk = parseFloat(row.querySelector('.harga-produk').textContent) || 0;
+			const totalProduk = jumlahProduk * hargaProduk;
+
+			// Update the total for the current row
+			row.querySelector('.total-produk').textContent = `Rp. ${totalProduk.toLocaleString('id-ID')}`;
+
+			// Add to grand total
+			grandTotal += totalProduk;
+		});
+
+		// Update the grand total
+		document.getElementById('total-keseluruhan').textContent = `Rp. ${grandTotal.toLocaleString('id-ID')}`;
+	});
+</script>
+<?php require_once '../footer.php' ?>

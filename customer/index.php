@@ -4,14 +4,8 @@ require_once 'customers.php';
 $customerObj = new Customers();
 $customers = $customerObj->readAll();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Customer Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<?php require_once '../header.php'?>
+
 <div class="container mt-5">
     <h2>Daftar Pelanggan</h2>
     <a href="/customer/create.php" class="btn btn-primary mb-3">
@@ -47,6 +41,5 @@ $customers = $customerObj->readAll();
         </tbody>
     </table>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+<?php require_once '../footer.php'?>
