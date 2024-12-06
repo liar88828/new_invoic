@@ -1,9 +1,11 @@
 <?php
+session_start();
+
 // Get the current script path
 $currentPath = $_SERVER['PHP_SELF']; // e.g., "/customer/index.php"
 
 
-//print_r("is : $currentPath")
+//index_r("is : $currentPath")
 ?>
 
 <!DOCTYPE html>
@@ -17,16 +19,22 @@ $currentPath = $_SERVER['PHP_SELF']; // e.g., "/customer/index.php"
 </head>
 <body class="d-flex">
 <div class="d-flex flex-column flex-shrink-0 p-3 bg-light  " style="width: 280px; min-height: 100vh;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-        <svg class="bi me-2" width="40" height="32">
-            <use xlink:href="#bootstrap"></use>
-        </svg>
-        <span class="fs-4">Sidebar</span>
-    </a>
+    <div class="d-flex flex-row">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+            <span class="fs-4">Sidebar</span>
+        </a>
+        <div class="">
+
+          <?php if (isset($_SESSION['user_id'])): ?>
+              <a href="../auth/logout.php" class="btn btn-danger btn-sm">Logout</a>
+          <?php endif; ?>
+        </div>
+    </div>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-            <a href="/" class="nav-link <?php echo $currentPath == '/index.php' ? 'active' : 'link-dark'; ?>" aria-current="page">
+            <a href="/" class="nav-link <?php echo $currentPath == '/home/index.php' ? 'active' : 'link-dark'; ?>"
+               aria-current="page">
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#home"></use>
                 </svg>
@@ -35,7 +43,8 @@ $currentPath = $_SERVER['PHP_SELF']; // e.g., "/customer/index.php"
         </li>
 
         <li>
-            <a href="/customer/index.php" class="nav-link <?php echo $currentPath == '/customer/index.php' ? 'active' : 'link-dark'; ?>">
+            <a href="/customer/index.php"
+               class="nav-link <?php echo $currentPath == '/customer/index.php' ? 'active' : 'link-dark'; ?>">
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#speedometer2"></use>
                 </svg>
@@ -44,7 +53,8 @@ $currentPath = $_SERVER['PHP_SELF']; // e.g., "/customer/index.php"
         </li>
 
         <li>
-            <a href="/produk/index.php" class="nav-link <?php echo $currentPath == '/produk/index.php' ? 'active' : 'link-dark'; ?>">
+            <a href="/produk/index.php"
+               class="nav-link <?php echo $currentPath == '/produk/index.php' ? 'active' : 'link-dark'; ?>">
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#table"></use>
                 </svg>
@@ -53,7 +63,8 @@ $currentPath = $_SERVER['PHP_SELF']; // e.g., "/customer/index.php"
         </li>
 
         <li>
-            <a href="/invoice/index.php" class="nav-link <?php echo $currentPath == '/invoice/index.php' ? 'active' : 'link-dark'; ?>">
+            <a href="/invoice/index.php"
+               class="nav-link <?php echo $currentPath == '/invoice/index.php' ? 'active' : 'link-dark'; ?>">
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#people-circle"></use>
                 </svg>
@@ -61,5 +72,7 @@ $currentPath = $_SERVER['PHP_SELF']; // e.g., "/customer/index.php"
             </a>
         </li>
     </ul>
+
+
     <!--    here -->
 </div>

@@ -30,7 +30,7 @@ $invoices = $invoiceObj->readAll();
         <td>
           <a href="update.php?id=<?= $invoice['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
           <a href="delete.php?id=<?= $invoice['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
-          <a href="../print/index.php?id=<?= $invoice['id'] ?>" class="btn btn-info btn-sm" >Print</a>
+          <a href="print.php?id=<?= $invoice['id'] ?>" class="btn btn-info btn-sm" >Print</a>
         </td>
       </tr>
     <?php endforeach; ?>

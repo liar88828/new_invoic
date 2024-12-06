@@ -6,7 +6,6 @@ require_once '../customer/customers.php';
 $productObj = new Products();
 $products = $productObj->readAll();
 
-
 $customerObj = new Customers();
 $customers = $customerObj->readAll();
 
@@ -14,15 +13,9 @@ $invoiceObj = new Invoices();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Calculate total
-  $subtotal = $_POST['subtotal'];
-  $ongkir = $_POST['ongkir'];
-  $discount = $_POST['discount'];
-  $uang_muka = $_POST['uang_muka'];
-  $total = $invoiceObj->calculateTotal($subtotal, $ongkir, $discount, $uang_muka);
   $customerData = json_decode($_POST['customer'], true);
   $productsData = json_decode($_POST['products'], true); // Decode data produk
 
-//  print_r($_POST['products_id']);
   $id_customer = $customerData[0]['id'];
   $id_products = array();
   foreach ($productsData as $product) {
@@ -31,18 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
   $data = [
-//    ':invoice' => $_POST['invoice'],
     ':tanggal_invoice' => $_POST['tanggal_invoice'],
-    ':subtotal' => $subtotal,
-    ':ongkir' => $ongkir,
-    ':discount' => $discount,
-    ':total' => $total,
+    ':ongkir' => $_POST['ongkir'],
+    ':discount' => $_POST['discount'],
+    ':total' => $_POST['total'],
     ':notes' => $_POST['notes'],
     ':status' => $_POST['status'],
-    ':uang_muka' => $uang_muka,
+    ':uang_muka' => $_POST['uang_muka'],
     ':id_customers' => $id_customer
   ];
-//
 
   // Simpan invoice ke database
   if ($invoiceObj->create($data, $id_products)) {
@@ -58,10 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <h2>Buat Invoice Baru</h2>
     <form method="POST">
         <div class="row">
-            <!--            <div class="col-md-6 mb-3">-->
-            <!--                <label class="form-label">Nomor Invoice</label>-->
-            <!--                <input type="text" name="invoice" class="form-control" required/>-->
-            <!--            </div>-->
             <div class="col-md-6 mb-3">
                 <label class="form-label">Tanggal Invoice</label>
                 <input type="date" name="tanggal_invoice" class="form-control" required/>
@@ -80,8 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         </div>
         <div class="row">
-
-
             <div class="col-md-6 mb-3">
                 <label class="form-label">Uang Muka</label>
                 <input type="number" name="uang_muka" class="form-control" required>
@@ -91,23 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label class="form-label">Ongkos Kirim</label>
                 <input type="number" name="ongkir" class="form-control" required>
             </div>
-
-
         </div>
         <div class="row">
-
-
             <div class="col-md-6 mb-3">
                 <label class="form-label">Diskon</label>
-                <input type="number" name="discount" class="form-control" required max="100">
+                <input type="number" name="discount" class="form-control" required max="100"/>
             </div>
 
-
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Subtotal</label>
-                <input type="number" name="subtotal" class="form-control" required>
-            </div>
-
+            <input type="text" name="total" required/>
         </div>
 
 
@@ -180,10 +155,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <th>Aksi</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="product-table">
                 <!-- Produk yang ditambahkan akan tampil di sini -->
                 </tbody>
             </table>
+
+            <h4>Total Keseluruhan: <span id="total-keseluruhan">0</span></h4>
+
         </div>
 
 
@@ -258,55 +236,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </tbody>
             </table>
         </div>
-        <input type="hidden" name="customer" id="customer">
+        <input  name="customer" id="customer">
         <input type="hidden" name="products" id="products">
+
+
+        <h4>Total Invoice: <span id="total-invoice">0</span></h4>
 
         <button type="submit" class="btn btn-primary">Simpan Invoice</button>
         <a href="invoices.php" class="btn btn-secondary">Batal</a>
     </form>
 </div>
 
-<script>
-	// Event Listener untuk Tombol "Tambah Produk" di Modal
-	document.querySelectorAll('.get-product').forEach(button => {
-		button.addEventListener('click', function () {
-			const row = this.closest('tr'); // Ambil baris tabel
-			const id = row.children[0].textContent; // Ambil ID produk
-			const name = row.children[1].textContent; // Nama produk
-			const quantity = row.children[2].textContent; // Jumlah produk
-			const price = row.children[3].textContent.replace(/Rp\.|,/g, '').trim(); // Harga produk
-			const total = parseInt(quantity) * parseInt(price); // Total harga
 
-			// Tambahkan produk ke tabel utama
-			const tableBody = document.getElementById('invoiceTable').querySelector('tbody');
-			const newRow = `
-                <tr>
-                    <td>${id}
-                        <input type="hidden" name="products_id"  value="${id}">
-                    </td>
-                    <td>${name}</td>
-                    <td>${quantity}</td>
-                    <td>Rp ${parseInt(price).toLocaleString('id-ID')}</td>
-                    <td>Rp ${total.toLocaleString('id-ID')}</td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" onclick="removeRow(this)">Hapus</button>
-                    </td>
-                </tr>
-            `;
-			tableBody.insertAdjacentHTML('beforeend', newRow);
-
-			// Tutup modal setelah menambahkan produk
-			const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
-			modal.hide();
-		});
-	});
-
-	// Fungsi untuk Menghapus Baris
-	function removeRow(button) {
-		button.closest('tr').remove();
-	}
-</script>
-
+<!--get-customer modal-->
 <script>
 	// Event Listener untuk Tambah Pelanggan dari Modal
 	document.querySelectorAll('.get-customer').forEach(button => {
@@ -354,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 </script>
 
-
+<!--invoiceTable-->
 <script>
 	// Tangkap event submit form
 	document.querySelector('form').addEventListener('submit', function (e) {
@@ -380,6 +322,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	});
 </script>
 
+
+<!--customerTable-->
 <script>
 	document.querySelector('form').addEventListener('submit', function (e) {
 		const tableBody = document.getElementById('customerTable').querySelector('tbody');
@@ -401,6 +345,113 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		document.getElementById('customer').value = JSON.stringify(customers);
 	});
+</script>
+
+<!--get-product -->
+<script>
+
+	<!--get-product -->
+	// Event Listener untuk Tombol "Tambah Produk" di Modal
+	document.querySelectorAll('.get-product').forEach(button => {
+		button.addEventListener('click', function () {
+			const row = this.closest('tr'); // Ambil baris tabel
+			const id = row.children[0].textContent; // Ambil ID produk
+			const name = row.children[1].textContent; // Nama produk
+			const quantity = row.children[2].textContent; // Jumlah produk
+			const price = row.children[3].textContent.replace(/Rp\.|,/g, '').trim(); // Harga produk
+			const total = parseInt(quantity) * parseInt(price); // Total harga
+
+			// Tambahkan produk ke tabel utama
+			const tableBody = document.getElementById('invoiceTable').querySelector('tbody');
+			const newRow = ` <tr>
+                <td>${id}
+                    <input type="hidden" name="products_id" value="${id}">
+                </td>
+                <td>${name}</td>
+                <td class="jumlah-produk">${quantity}</td>
+                <td class="harga-produk">${parseInt(price).toLocaleString('id-ID')}</td>
+                <td class="total-produk">Rp ${total.toLocaleString('id-ID')}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="removeRow(this)">Hapus</button>
+                </td>
+            </tr>
+        `;
+			tableBody.insertAdjacentHTML('beforeend', newRow);
+
+			// Update total keseluruhan
+			calculateSubtotal()
+
+			// Tutup modal setelah menambahkan produk
+			const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+			modal.hide();
+		});
+	});
+
+
+	// Fungsi untuk Menghitung Total Keseluruhan
+	function updateTotal() {
+		const rows = document.querySelectorAll('#invoiceTable tbody tr');
+		let grandTotal = 0;
+
+		rows.forEach(row => {
+			const quantity = parseInt(row.querySelector('.jumlah-produk').textContent) || 0;
+			const price = parseInt(row.querySelector('.harga-produk').textContent.replace(/Rp\.|,/g, '').trim()) || 0;
+			const total = quantity * price;
+			grandTotal += total;
+
+			// Update total per row
+			row.querySelector('.total-produk').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+		});
+
+		// Update grand total
+		document.getElementById('total-keseluruhan').textContent = `${grandTotal.toLocaleString('id-ID')}`;
+		return grandTotal
+	}
+
+
+	// Fungsi untuk Menghapus Baris
+	function removeRow(button) {
+		button.closest('tr').remove();
+		calculateSubtotal()
+	}
+
+	// Get form inputs
+	const uangMukaInput = document.querySelector('[name="uang_muka"]');
+	const ongkirInput = document.querySelector('[name="ongkir"]');
+	const discountInput = document.querySelector('[name="discount"]');
+	const totalInput = document.querySelector('[name="total"]');
+	const totalInvoice = document.getElementById('total-invoice');  // Add this for total invoice update
+
+	// Function to calculate subtotal based on inputs
+	function calculateSubtotal() {
+		let data = updateTotal()
+		const uangMuka = parseFloat(uangMukaInput.value) || 0;
+		const ongkir = parseFloat(ongkirInput.value) || 0;
+		const discount = parseFloat(discountInput.value) || 0;
+
+		// Ensure discount is not greater than 100
+		const validDiscount = discount > 100 ? 100 : discount;
+
+		// Calculate subtotal with discount applied to ongkir (if that's your requirement)
+		// const subtotal = (ongkir - (ongkir * (validDiscount / 100))) - uangMuka;
+		let totalAll = data + ongkir;
+		const totalAfterDiscount = (totalAll - (totalAll * (validDiscount / 100))) - uangMuka
+
+		totalInput.value = totalAfterDiscount
+
+		// Update the total-invoice (use subtotal for total invoice)
+		totalInvoice.textContent = `Rp ${totalAfterDiscount.toFixed(2).toLocaleString('id-ID')}`;
+		// totalKeseluruhan.textContent = totalAfterDiscount.toLocaleString('id-ID')
+	}
+
+
+	// Event listeners to trigger calculation whenever an input changes
+	uangMukaInput.addEventListener('input', calculateSubtotal);
+	ongkirInput.addEventListener('input', calculateSubtotal);
+	discountInput.addEventListener('input', calculateSubtotal);
+
+	// Optional: Trigger the calculation on form load if any initial values exist
+	window.addEventListener('load', calculateSubtotal);
 </script>
 
 <?php require_once '../footer.php' ?>

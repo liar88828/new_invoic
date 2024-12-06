@@ -18,6 +18,7 @@ $products = $productObj->readAll();
             <th>Nama Produk</th>
             <th>Jumlah</th>
             <th>Harga</th>
+            <th>Total</th>
             <th>Aksi</th>
         </tr>
         </thead>
@@ -27,7 +28,7 @@ $products = $productObj->readAll();
                 <td><?= htmlspecialchars($product['id_produk']) ?></td>
                 <td><?= htmlspecialchars($product['nama_produk']) ?></td>
                 <td class="jumlah-produk"><?= htmlspecialchars($product['jumlah_produk']) ?></td>
-                <td class="harga-produk">Rp. <?= htmlspecialchars($product['harga_produk']) ?></td>
+                <td class="harga-produk"><?= htmlspecialchars($product['harga_produk']) ?></td>
                 <td class="total-produk">Rp. 0</td>
                 <td>
                     <a href="update_product.php?id=<?= $product['id_produk'] ?>" class="btn btn-warning btn-sm">Edit</a>
@@ -42,14 +43,12 @@ $products = $productObj->readAll();
     </table>
 
     <h4>Total Keseluruhan: <span id="total-keseluruhan">Rp. 0</span></h4>
-
 </div>
-
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
-		const rows = document.querySelectorAll('#product-table tr');
+		const rows = document.querySelectorAll('#product-table ');
 		let grandTotal = 0;
-
+		console.log(rows)
 		rows.forEach(row => {
 			const jumlahProduk = parseFloat(row.querySelector('.jumlah-produk').textContent) || 0;
 			const hargaProduk = parseFloat(row.querySelector('.harga-produk').textContent) || 0;
@@ -66,4 +65,5 @@ $products = $productObj->readAll();
 		document.getElementById('total-keseluruhan').textContent = `Rp. ${grandTotal.toLocaleString('id-ID')}`;
 	});
 </script>
+
 <?php require_once '../footer.php' ?>

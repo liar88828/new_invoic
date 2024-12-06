@@ -1,61 +1,21 @@
 <?php
 // Konfigurasi koneksi database
 require_once '../db_connection.php';
+require_once 'invoices.php';
 
 
 // Ambil data invoice berdasarkan ID atau parameter lainnya
 $invoice_id = $_GET['id'] ?? 1; // Ganti dengan parameter dinamis
-$sql = "
-    SELECT 
-        c.nama AS nama_customer,
-        c.alamat AS alamat_customer,
-        c.kota AS kota_customer,
-        c.postcode AS postcode_customer,
-        c.tlp AS telepon_customer,
-        c.nama_penerima,
-        c.alamat_penerima,
-        c.postcode_penerima,
-        i.id as id_invoice,
-        i.invoice,
-        i.tanggal_invoice,
-        i.subtotal,
-        i.ongkir,
-        i.discount,
-        i.total,
-        i.notes,
-        i.status,
-        i.uang_muka
-    FROM invoices i
-         JOIN customers as c ON i.id_customers = c.id
-    WHERE i.id = $invoice_id
-";
+$invoices = new  Invoices();
+$response = $invoices->findPrint($invoice_id);
 
-
-$database = new Database();
-$conn = $database->connect();
-$result = $conn->query($sql);
-$invoice = $result->fetch();
-
-
-
-function readAll($id_invoice)
-{
-  global $conn;
-  $sql = "SELECT * FROM products as p
-         JOIN invoice_product ip on p.id_produk = ip.id_product
-         where ip.id_invoice = :id_invoice";
-  $stmt = $conn->prepare($sql);
-  $stmt->execute(['id_invoice' => $id_invoice]);
-//  $stmt = $conn->query($sql);
-  return $stmt->fetchAll();
-}
-
-//print_r($invoice)   ;
-$products = readAll($invoice['id_invoice']);
+$invoice = $response['invoice'];
+$products = $response['products'];
 
 if (!$invoice) {
   die("Invoice tidak ditemukan.");
 }
+
 
 // Tutup koneksi setelah fetch
 //$conn->close();
@@ -71,10 +31,24 @@ if (!$invoice) {
 </head>
 <body>
 <div class="container my-5 ">
+
     <div class="card " id="print-pdf">
+
         <div class="card-header text-center">
-            <h3>Invoice #<?= $invoice['invoice'] ?></h3>
-            <small>Tanggal: <?= $invoice['tanggal_invoice'] ?></small>
+            <div class="d-flex justify-content-between items-center">
+                <img src="https://img.freepik.com/premium-vector/money-logo-icon-design-vector-illustration_6415-7832.jpg?w=740"
+                     alt="logo"
+                     style="height: 100px;width: 100px; border-radius: 100%;"
+                >
+                <div class="mt-3">
+                    <h3>Invoice #<?= $invoice['id_invoice'] ?></h3>
+                    <small>Tanggal: <?= $invoice['tanggal_invoice'] ?></small>
+                </div>
+                <div class=""
+                     style="height: 100px;width: 100px; border-radius: 100%;"
+
+                ></div>
+            </div>
         </div>
         <div class="card-body">
             <div class="row mb-4">
@@ -123,7 +97,7 @@ if (!$invoice) {
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>Subtotal</th>
+                        <th>total</th>
                         <th>Ongkir</th>
                         <th>Diskon</th>
                         <th>Total</th>
@@ -131,7 +105,7 @@ if (!$invoice) {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>Rp <?= number_format($invoice['subtotal'], 0, ',', '.') ?></td>
+                        <td>Rp <?= number_format($invoice['total'], 0, ',', '.') ?></td>
                         <td>Rp <?= number_format($invoice['ongkir'], 0, ',', '.') ?></td>
                         <td>Rp <?= number_format($invoice['discount'], 0, ',', '.') ?></td>
                         <td>Rp <?= number_format($invoice['total'], 0, ',', '.') ?></td>
@@ -158,9 +132,10 @@ if (!$invoice) {
         </div>
 
     </div>
-    <div class="card-footer text-center">
+    <div class="card-footer text-center mt-5">
         <button class="btn btn-primary" onclick="window.print()">Print</button>
         <button class="btn btn-success" id="downloadPDF">Download PDF</button>
+        <a href="/invoice/index.php" class="btn btn-secondary">Back</a>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>

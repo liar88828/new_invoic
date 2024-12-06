@@ -1,16 +1,19 @@
 <?php
 require_once '../db_connection.php';
 
-class Customers {
+class Customers
+{
   private $conn;
 
-  public function __construct() {
+  public function __construct()
+  {
     $database = new Database();
     $this->conn = $database->connect();
   }
 
   // Create Customer
-  public function create($data) {
+  public function create($data)
+  {
     $sql = "INSERT INTO customers 
                 (invoice, nama, alamat, kota, postcode, tlp, nama_penerima, alamat_penerima, postcode_penerima) 
                 VALUES 
@@ -21,14 +24,25 @@ class Customers {
   }
 
   // Read All Customers
-  public function readAll() {
+  public function readAll()
+  {
     $sql = "SELECT * FROM customers";
     $stmt = $this->conn->query($sql);
     return $stmt->fetchAll();
   }
 
+  public function readAllById($id)
+  {
+    $sql = "SELECT * FROM customers WHERE id = :id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute(['id' => $id]);
+    return $stmt->fetchAll();
+  }
+
+
   // Read Single Customer
-  public function readSingle($id) {
+  public function readSingle($id)
+  {
     $sql = "SELECT * FROM customers WHERE id = :id";
     $stmt = $this->conn->prepare($sql);
     $stmt->execute(['id' => $id]);
@@ -36,7 +50,8 @@ class Customers {
   }
 
   // Update Customer
-  public function update($data) {
+  public function update($data)
+  {
     $sql = "UPDATE customers SET 
                 invoice = :invoice, 
                 nama = :nama, 
@@ -54,10 +69,12 @@ class Customers {
   }
 
   // Delete Customer
-  public function delete($id) {
+  public function delete($id)
+  {
     $sql = "DELETE FROM customers WHERE id = :id";
     $stmt = $this->conn->prepare($sql);
     return $stmt->execute(['id' => $id]);
   }
 }
+
 ?>
