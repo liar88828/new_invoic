@@ -4,7 +4,6 @@ require_once 'customers.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $customerObj = new Customers();
   $data = [
-    ':invoice' => $_POST['invoice'],
     ':nama' => $_POST['nama'],
     ':alamat' => $_POST['alamat'],
     ':kota' => $_POST['kota'],
@@ -28,11 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <h2>Tambah Pelanggan Baru</h2>
   <form method="POST">
     <div class="row">
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Invoice</label>
-        <input type="text" name="invoice" class="form-control" required>
-      </div>
-      <div class="col-md-6 mb-3">
+
+    <div class="col-md-6 mb-3">
         <label class="form-label">Nama</label>
         <input type="text" name="nama" class="form-control" required>
       </div>

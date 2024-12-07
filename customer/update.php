@@ -10,7 +10,6 @@ if (isset($_GET['id'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $data = [
     ':id' => $_POST['id'],
-    ':invoice' => $_POST['invoice'],
     ':nama' => $_POST['nama'],
     ':alamat' => $_POST['alamat'],
     ':kota' => $_POST['kota'],
@@ -34,11 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <form method="POST">
     <input type="hidden" name="id" value="<?= htmlspecialchars($customer['id']) ?>">
     <div class="row">
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Invoice</label>
-        <input type="text" name="invoice" class="form-control" value="<?= htmlspecialchars($customer['invoice']) ?>" required>
-      </div>
-      <div class="col-md-6 mb-3">
+
+    <div class="col-md-6 mb-3">
         <label class="form-label">Nama</label>
         <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($customer['nama']) ?>" required>
       </div>

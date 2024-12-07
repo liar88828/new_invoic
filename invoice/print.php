@@ -33,10 +33,9 @@ if (!$invoice) {
 <div class="container my-5 ">
 
     <div class="card " id="print-pdf">
-
         <div class="card-header text-center">
             <div class="d-flex justify-content-between items-center">
-                <img src="https://img.freepik.com/premium-vector/money-logo-icon-design-vector-illustration_6415-7832.jpg?w=740"
+                <img src="/public/logo.png"
                      alt="logo"
                      style="height: 100px;width: 100px; border-radius: 100%;"
                 >
@@ -51,8 +50,8 @@ if (!$invoice) {
             </div>
         </div>
         <div class="card-body">
-            <div class="row mb-4">
-                <div class="col-md-6">
+            <div class="d-flex justify-content-between">
+                <div>
                     <h5>Customer</h5>
                     <p>
                       <?= $invoice['nama_customer'] ?><br>
@@ -61,7 +60,8 @@ if (!$invoice) {
                         Telepon: <?= $invoice['telepon_customer'] ?>
                     </p>
                 </div>
-                <div class="col-md-6">
+
+                <div>
                     <h5>Penerima</h5>
                     <p>
                       <?= $invoice['nama_penerima'] ?><br>
@@ -78,6 +78,7 @@ if (!$invoice) {
                         <th>Keterangan Produk</th>
                         <th>Jumlah Produk</th>
                         <th>Harga Produk</th>
+                        <th>Total Produk</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -85,48 +86,49 @@ if (!$invoice) {
                         <tr>
                             <td><?= $product['nama_produk'] ?><br></td>
                             <td><?= mb_strimwidth($product['keterangan_produk'], 0, 50, "...") ?> </td>
-                            <td><?= mb_strimwidth($product['jumlah_produk'], 0, 50, "...") ?> </td>
-                            <td>Rp <?= number_format($product['harga_produk'], 0, ',', '.') ?></td>
+                            <td class="jumlah-produk"><?= htmlspecialchars($product['jumlah_produk']) ?></td>
+                            <td class="harga-produk"><?= htmlspecialchars($product['harga_produk']) ?></td>
+                            <td class="totaldb-produk"><?= htmlspecialchars($product['total_produk']) ?></td>
                         </tr>
                     <?php endforeach; ?>
-
                     </tbody>
                 </table>
+                <h5 class="text-end">Total Keseluruhan Produk: <span id="total-keseluruhan">Rp. 0</span></h5>
+
             </div>
             <div class="row">
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>total</th>
                         <th>Ongkir</th>
                         <th>Diskon</th>
-                        <th>Total</th>
+                        <th>Bayar Total</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td>Rp <?= number_format($invoice['total'], 0, ',', '.') ?></td>
                         <td>Rp <?= number_format($invoice['ongkir'], 0, ',', '.') ?></td>
-                        <td>Rp <?= number_format($invoice['discount'], 0, ',', '.') ?></td>
-                        <td>Rp <?= number_format($invoice['total'], 0, ',', '.') ?></td>
+                        <td><?= $invoice['discount'] ?>%</td>
+                        <td class="fw-bold text-decoration-underline">
+                            Rp <?= number_format($invoice['total'], 0, ',', '.') ?></td>
+
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="row">
-                <h5>Deskripsi</h5>
-                <p><?= $invoice['notes'] ?></p>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5>Deskripsi</h5>
+                    <p><?= $invoice['notes'] ?></p>
 
-            </div>
-
-            <div class="row">
-                <div class="col-md-12 text-end">
-                    <h5>Uang Muka: Rp <?= number_format($invoice['uang_muka'], 0, ',', '.') ?></h5>
                 </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <small>Status: <?= $invoice['status'] ?></small>
+
+                <div class="row">
+                    <div class="col-md-12 text-end">
+                        <h5>Uang Muka: Rp <?= number_format($invoice['uang_muka'], 0, ',', '.') ?></h5>
+                        <small>Status: <?= $invoice['status'] ?></small>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -166,6 +168,19 @@ if (!$invoice) {
 	});
 </script>
 
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		let totalKeseluruhan = 0;
+		const totalElements = document.querySelectorAll('.totaldb-produk');
+
+		totalElements.forEach(function (element) {
+			const total = parseFloat(element.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+			totalKeseluruhan += total;
+		});
+
+		document.getElementById('total-keseluruhan').textContent = 'Rp. ' + totalKeseluruhan.toLocaleString('id-ID');
+	});
+</script>
 
 </body>
 </html>

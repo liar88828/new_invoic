@@ -15,9 +15,9 @@ class Customers
   public function create($data)
   {
     $sql = "INSERT INTO customers 
-                (invoice, nama, alamat, kota, postcode, tlp, nama_penerima, alamat_penerima, postcode_penerima) 
+                (  nama, alamat, kota, postcode, tlp, nama_penerima, alamat_penerima, postcode_penerima) 
                 VALUES 
-                (:invoice, :nama, :alamat, :kota, :postcode, :tlp, :nama_penerima, :alamat_penerima, :postcode_penerima)";
+                (  :nama, :alamat, :kota, :postcode, :tlp, :nama_penerima, :alamat_penerima, :postcode_penerima)";
 
     $stmt = $this->conn->prepare($sql);
     return $stmt->execute($data);
@@ -53,7 +53,6 @@ class Customers
   public function update($data)
   {
     $sql = "UPDATE customers SET 
-                invoice = :invoice, 
                 nama = :nama, 
                 alamat = :alamat, 
                 kota = :kota, 

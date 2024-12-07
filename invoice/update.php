@@ -214,7 +214,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Invoice</th>
                                 <th>Nama</th>
                                 <th>Kota</th>
                                 <th>Aksi</th>
@@ -224,7 +223,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <?php foreach ($customers as $customer): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($customer['id']) ?></td>
-                                    <td><?= htmlspecialchars($customer['invoice']) ?></td>
                                     <td><?= htmlspecialchars($customer['nama']) ?></td>
                                     <td><?= htmlspecialchars($customer['kota']) ?></td>
                                     <td>
@@ -255,7 +253,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Invoice</th>
                     <th>Nama</th>
                     <th>Kota</th>
                     <th>Aksi</th>
@@ -271,7 +268,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           <?= htmlspecialchars($customerDB['id']) ?>
                             <input type="hidden" name="customer_id" value="<?= htmlspecialchars($customerDB['id']) ?>">
                         </td>
-                        <td><?= htmlspecialchars($customerDB['invoice']) ?></td>
                         <td><?= htmlspecialchars($customerDB['nama']) ?></td>
                         <td><?= htmlspecialchars($customerDB['kota']) ?></td>
                         <td>
@@ -304,7 +300,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		button.addEventListener('click', function () {
 			const row = this.closest('tr'); // Ambil baris tabel
 			const id = row.children[0].textContent.trim(); // ID pelanggan
-			const invoice = row.children[1].textContent.trim(); // Invoice pelanggan
 			const name = row.children[2].textContent.trim(); // Nama pelanggan
 			const city = row.children[3].textContent.trim(); // Kota pelanggan
 
@@ -323,7 +318,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <td>${id}
                         <input type="hidden" name="customer_id"  value="${id}">
                     </td>
-                    <td>${invoice}</td>
                     <td>${name}</td>
                     <td>${city}</td>
                     <td>
@@ -386,7 +380,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		const customers = Array.from(rows).map(row => {
 			return {
 				id: row.dataset.id,
-				invoice: row.children[1].textContent.trim(),
 				name: row.children[2].textContent.trim(),
 				city: row.children[3].textContent.trim()
 			};
@@ -504,4 +497,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	window.addEventListener('load', calculateSubtotal);
 </script>
 
+<script>
+	const discountInput = document.getElementById('discount');
+
+	discountInput.addEventListener('input', () => {
+		if (discountInput.value > 100) {
+			discountInput.value = 100; // Reset the value to the maximum allowed
+		}
+	});
+</script>
 <?php require_once '../footer.php' ?>

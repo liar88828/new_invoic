@@ -14,8 +14,8 @@ class Products
   // Create Product
   public function create($data)
   {
-    $sql = "INSERT INTO products (nama_produk, keterangan_produk, harga_produk,jumlah_produk) 
-                VALUES (:nama_produk, :keterangan_produk, :harga_produk,:jumlah_produk)";
+    $sql = "INSERT INTO products (nama_produk, keterangan_produk,total_produk, harga_produk,jumlah_produk) 
+                VALUES (:nama_produk, :keterangan_produk, :total_produk,:harga_produk,:jumlah_produk)";
 
     $stmt = $this->conn->prepare($sql);
     return $stmt->execute($data);
@@ -56,10 +56,13 @@ class Products
     $sql = "UPDATE products SET 
                 nama_produk = :nama_produk, 
                 keterangan_produk = :keterangan_produk, 
-                harga_produk = :harga_produk 
+                harga_produk = :harga_produk,
+                total_produk = :total_produk,
+                jumlah_produk = :jumlah_produk
                 WHERE id_produk = :id_produk";
 
     $stmt = $this->conn->prepare($sql);
+//  print_r($stmt);
     return $stmt->execute($data);
   }
 

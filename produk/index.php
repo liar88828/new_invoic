@@ -29,7 +29,7 @@ $products = $productObj->readAll();
                 <td><?= htmlspecialchars($product['nama_produk']) ?></td>
                 <td class="jumlah-produk"><?= htmlspecialchars($product['jumlah_produk']) ?></td>
                 <td class="harga-produk"><?= htmlspecialchars($product['harga_produk']) ?></td>
-                <td class="total-produk">Rp. 0</td>
+                <td class="totaldb-produk"><?= htmlspecialchars($product['total_produk']) ?></td>
                 <td>
                     <a href="update_product.php?id=<?= $product['id_produk'] ?>" class="btn btn-warning btn-sm">Edit</a>
                     <a href="delete_product.php?id=<?= $product['id_produk'] ?>" class="btn btn-danger btn-sm"
@@ -44,26 +44,18 @@ $products = $productObj->readAll();
 
     <h4>Total Keseluruhan: <span id="total-keseluruhan">Rp. 0</span></h4>
 </div>
+
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
-		const rows = document.querySelectorAll('#product-table ');
-		let grandTotal = 0;
-		console.log(rows)
-		rows.forEach(row => {
-			const jumlahProduk = parseFloat(row.querySelector('.jumlah-produk').textContent) || 0;
-			const hargaProduk = parseFloat(row.querySelector('.harga-produk').textContent) || 0;
-			const totalProduk = jumlahProduk * hargaProduk;
+		let totalKeseluruhan = 0;
+		const totalElements = document.querySelectorAll('.totaldb-produk');
 
-			// Update the total for the current row
-			row.querySelector('.total-produk').textContent = `Rp. ${totalProduk.toLocaleString('id-ID')}`;
-
-			// Add to grand total
-			grandTotal += totalProduk;
+		totalElements.forEach(function (element) {
+			const total = parseFloat(element.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+			totalKeseluruhan += total;
 		});
 
-		// Update the grand total
-		document.getElementById('total-keseluruhan').textContent = `Rp. ${grandTotal.toLocaleString('id-ID')}`;
+		document.getElementById('total-keseluruhan').textContent = 'Rp. ' + totalKeseluruhan.toLocaleString('id-ID');
 	});
 </script>
-
 <?php require_once '../footer.php' ?>

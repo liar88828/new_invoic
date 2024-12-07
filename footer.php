@@ -5,15 +5,7 @@
 </script>
 
 
-<script>
-	const discountInput = document.getElementById('discount');
 
-	discountInput.addEventListener('input', () => {
-		if (discountInput.value > 100) {
-			discountInput.value = 100; // Reset the value to the maximum allowed
-		}
-	});
-</script>
 
 
 </body>

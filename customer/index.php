@@ -16,7 +16,6 @@ $customers = $customerObj->readAll();
         <thead>
         <tr>
             <th>ID</th>
-            <th>Invoice</th>
             <th>Nama</th>
             <th>Kota</th>
             <th>Aksi</th>
@@ -26,7 +25,6 @@ $customers = $customerObj->readAll();
         <?php foreach ($customers as $customer): ?>
             <tr>
                 <td><?= htmlspecialchars($customer['id']) ?></td>
-                <td><?= htmlspecialchars($customer['invoice']) ?></td>
                 <td><?= htmlspecialchars($customer['nama']) ?></td>
                 <td><?= htmlspecialchars($customer['kota']) ?></td>
                 <td>

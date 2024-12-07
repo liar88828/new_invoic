@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ':nama_produk' => $_POST['nama_produk'],
     ':keterangan_produk' => $_POST['keterangan_produk'],
     ':harga_produk' => $_POST['harga_produk'],
+    ':total_produk' => $_POST['harga_produk'] * $_POST['jumlah_produk'],
     ':jumlah_produk' => $_POST['jumlah_produk']
   ];
 
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<?php require_once '../header.php'?>
+<?php require_once '../header.php' ?>
 
 
 <div class="container mt-5">
@@ -45,4 +46,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 
-<?php require_once '../footer.php'?>
+<?php require_once '../footer.php' ?>

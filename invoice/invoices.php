@@ -127,6 +127,7 @@ class Invoices
       $stmt->execute(['id' => $id]);
 
       $this->conn->commit();
+      return true;
     } catch (PDOException $e) {
       $this->conn->rollBack();
       throw $e;
